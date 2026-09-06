@@ -181,22 +181,20 @@ window.show = show;
 refreshNavLabels();
 
 // ===================== THEME =====================
-// Four modes now: light (default) → dark (pure black glass) → vibrant (the
-// premium zip's light purple/pink/blue look) → aurora (the premium zip's own
-// dark mode) → back to light. Each click on the theme button advances one
-// step; the chosen mode is remembered per browser.
+// Four modes now: aurora (default) → light → dark → vibrant → back to aurora.
+// Each click on the theme button advances one step; the chosen mode is remembered per browser.
 const THEME_ORDER = ['light', 'dark', 'vibrant', 'aurora'];
 const THEME_ICON = { light: '☼', dark: '☾', vibrant: '✦', aurora: '✶' };
 const THEME_TITLE = { light: 'Switch to dark mode', dark: 'Switch to vibrant mode', vibrant: 'Switch to aurora mode', aurora: 'Switch to light mode' };
 function applyTheme(mode) {
-  const theme = THEME_ORDER.includes(mode) ? mode : 'light';
+  const theme = THEME_ORDER.includes(mode) ? mode : 'aurora';
   document.documentElement.dataset.theme = theme;
   localStorage.setItem('fitpose-theme', theme);
   const btn = document.getElementById('theme');
   btn.textContent = THEME_ICON[theme];
   btn.title = THEME_TITLE[theme];
 }
-applyTheme(localStorage.getItem('fitpose-theme') || 'light');
+applyTheme(localStorage.getItem('fitpose-theme') || 'aurora');
 document.getElementById('theme').onclick = () => {
   const current = document.documentElement.dataset.theme;
   const next = THEME_ORDER[(THEME_ORDER.indexOf(current) + 1) % THEME_ORDER.length];
