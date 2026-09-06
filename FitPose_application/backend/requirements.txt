@@ -1,0 +1,11 @@
+Flask
+opencv-python
+mediapipe
+numpy
+gunicorn
+google-cloud-firestore
+PyJWT
+requests
+openai
+python-dotenv
+torch

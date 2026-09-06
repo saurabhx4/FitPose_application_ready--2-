@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FitPose — AI Movement Coach</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/css/style.css">
+</head>
+<body>
+<div class="app">
+<nav class="nav">
+ <button class="logo" onclick="show('home')"><img class="mark" src="/fitpose-logo.jpg" alt="FitPose logo"><span>FitPose</span></button>
+ <div class="navlinks" id="navlinks"></div>
+ <div class="actions" id="navActions">
+  <button class="iconbtn" id="theme" title="Toggle day/night">☼</button>
+  <button class="navLogin" id="navLoginBtn" data-i18n="nav.login" onclick="show('login')">Sign in</button>
+  <a class="btn soft" href="#workout" onclick="show('workout')">✦ <span data-i18n="nav.startSession">Start Session</span></a>
+ </div>
+</nav>
+
+<section id="home" class="page active">
+ <div class="hero">
+  <div><span class="eyebrow">✦ AI-powered movement wellness</span>
+   <h1>Move better.<br><span class="gradient">Feel unstoppable.</span></h1>
+   <p class="lead">FitPose turns movement into a habit you actually want to keep — with real-time AI posture feedback from your camera, motivating progress tracking, and a cozy experience that feels made for you.</p>
+   <div class="heroBtns"><button class="btn primary" onclick="show('workout')">Start My FitPose →</button><button class="btn soft" onclick="show('ai')">Meet Your AI Coach ✦</button></div>
+  </div>
+  <div class="visual"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1100&q=85" alt="Athlete performing a squat">
+   <div class="hud h1"><small>Form score</small><b id="homeFormScore">0%</b></div>
+   <div class="hud h2"><small>Day streak</small><b id="homeStreak">0 🔥</b></div>
+   <div class="hud h3">✨ Great alignment!</div>
+  </div>
+ </div>
+ <div class="sectionHead"><h2>Today, made motivating.</h2><span class="chip" id="liveDataChip">Sign in to see your data</span></div>
+ <div class="grid grid4">
+  <div class="card stat"><span class="muted">Movement score</span><div class="num" id="homeMovementScore">0%</div><div class="progress"><i id="homeMovementBar" style="--w:0%"></i></div></div>
+  <div class="card stat"><span class="muted">Workout time</span><div class="num" id="homeWorkoutTime">0m</div><span class="trend" id="homeWorkoutTrend">Sign in to track</span></div>
+  <div class="card stat"><span class="muted">Calories</span><div class="num" id="homeCalories">0</div><span class="trend">↗ Live tracking</span></div>
+  <div class="card stat"><span class="muted">Streak</span><div class="num" id="homeStreakNum">0 🔥</div><span class="trend">Keep it alive</span></div>
+ </div>
+</section>
+
+<section id="login" class="page">
+ <div class="loginWrap">
+  <div class="loginIntro">
+   <span class="eyebrow">✦ Welcome to FitPose</span>
+   <h2>Ready to feel<br><span class="gradient">your best?</span></h2>
+   <p class="muted">Sign in to continue your workouts, AI coaching, streaks and progress.</p>
+   <div class="loginMini"><span>🔥</span><div><b id="loginStreakMini">Your streak stays with you</b><small>Your progress stays with you</small></div></div>
+   <div class="loginMini"><span>✦</span><div><b>AI Coach</b><small> Personalized movement guidance</small></div></div>
+  </div>
+
+  <div class="card loginCard" id="signinCard">
+   <div class="loginLogo">FP</div>
+   <h2>Welcome back</h2><p class="muted">Sign in to your FitPose account</p>
+   <form id="signinForm" onsubmit="return false">
+    <label>Email address</label><input class="loginInput" id="signinEmail" type="email" placeholder="you@example.com" required>
+    <label>Password</label><div class="pass"><input class="loginInput" id="signinPassword" type="password" placeholder="••••••••" required><button type="button" onclick="togglePass(this)">◉</button></div>
+    <div class="field-err" id="signinErr"></div>
+    <div class="loginRow"><label class="check"><input type="checkbox" id="signinRemember"> Remember me</label><a href="#" class="muted" onclick="openForgot();return false">Forgot password?</a></div>
+    <button class="btn primary loginBtn" id="signinSubmit" type="submit">Sign in →</button>
+   </form>
+   <div class="or"><span></span>or<span></span></div>
+   <button class="btn soft loginBtn" id="googleBtn">Continue with Google</button>
+   <p class="loginFoot">New to FitPose? <a href="#" onclick="showSignup();return false"><b>Create an account</b></a></p>
+  </div>
+
+  <div class="card loginCard" id="signupCard" style="display:none">
+   <div class="loginLogo">FP</div>
+   <h2>Create your account</h2><p class="muted">Start your FitPose journey</p>
+   <form id="signupForm" onsubmit="return false">
+    <label>Full name</label><input class="loginInput" id="signupName" type="text" placeholder="Nandini Sharma" required>
+    <label>Email address</label><input class="loginInput" id="signupEmail" type="email" placeholder="you@example.com" required>
+    <label>Password</label><div class="pass"><input class="loginInput" id="signupPassword" type="password" placeholder="At least 6 characters" required minlength="6"><button type="button" onclick="togglePass(this)">◉</button></div>
+    <div class="field-err" id="signupErr"></div>
+    <div class="profileSetupGrid">
+     <div><label data-i18n="onboarding.ageGroup">Age group</label><select class="loginInput" id="signupAgeGroup" required><option value="" data-i18n="onboarding.chooseAge">Choose age group</option><option value="under18" data-i18n="onboarding.under18">Under 18</option><option value="18-60" data-i18n="onboarding.18to60">18–60</option><option value="60plus" data-i18n="onboarding.60plus">60+</option></select></div>
+     <div><label data-i18n="onboarding.gender">Gender</label><select class="loginInput" id="signupGender" required><option value="" data-i18n="onboarding.chooseGender">Choose gender</option><option value="female" data-i18n="onboarding.female">Female</option><option value="male" data-i18n="onboarding.male">Male</option><option value="nonbinary" data-i18n="onboarding.nonbinary">Non-binary</option><option value="prefer_not" data-i18n="onboarding.preferNot">Prefer not to say</option></select></div>
+     <div style="grid-column:1/-1"><label data-i18n="profile.preferredLanguage">Voice Assistant Language</label><select class="loginInput" id="signupLanguage" required></select></div>
+    </div>
+    <button class="btn primary loginBtn" id="signupSubmit" type="submit">Create account →</button>
+   </form>
+   <p class="loginFoot">Already have an account? <a href="#" onclick="showSignin();return false"><b>Sign in</b></a></p>
+  </div>
+
+  <div class="card loginCard" id="forgotCard" style="display:none">
+   <div class="loginLogo">FP</div>
+   <h2>Reset password</h2><p class="muted">We'll generate a temporary password for this demo account.</p>
+   <label>Email address</label><input class="loginInput" id="forgotEmail" type="email" placeholder="you@example.com">
+   <div class="field-err" id="forgotErr"></div>
+   <button class="btn primary loginBtn" onclick="doReset()">Send reset →</button>
+   <p class="loginFoot"><a href="#" onclick="showSignin();return false"><b>Back to sign in</b></a></p>
+  </div>
+ </div>
+</section>
+
+<section id="dashboard" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">Personal dashboard</span><h2 id="dashGreeting">Good morning 👋</h2><p class="muted">One small session today can change how you feel tomorrow.</p></div><button class="btn primary" onclick="show('workout')">Start Workout</button></div>
+ <div class="grid grid4">
+  <div class="card stat"><span class="muted">Posture score</span><div class="num" id="dashForm">87%</div><span class="trend" id="dashFormTrend">Overall average form</span></div>
+  <div class="card stat"><span class="muted">Calories today</span><div class="num" id="dashCalories">312</div></div>
+  <div class="card stat"><span class="muted">Workout time today</span><div class="num" id="dashTime">24m</div></div>
+  <div class="card stat"><span class="muted">Current streak</span><div class="num" id="dashStreak">7 🔥</div></div>
+ </div>
+ <div class="grid grid4">
+  <div class="card stat"><span class="muted">This week</span><div class="num" id="progWeek">142m</div></div>
+  <div class="card stat"><span class="muted">Best streak</span><div class="num" id="progBest">14 🔥</div></div>
+  <div class="card stat"><span class="muted">Total sessions</span><div class="num" id="progSessions">32</div></div>
+  <div class="card stat"><span class="muted">Consistency score</span><div class="num" id="progScoreNum">87%</div></div>
+ </div>
+ <div class="sectionHead"><h2>Activity & attendance</h2><div class="tabs" id="dashTabs"><button class="active" onclick="metric(this,'daily','dash')">Daily</button><button onclick="metric(this,'weekly','dash')">Weekly</button><button onclick="metric(this,'monthly','dash')">Monthly</button></div></div>
+ <div class="grid">
+  <div class="card"><h3>Attendance</h3><p class="muted">Your movement habit this month</p><div class="calendar" id="calendar"></div></div>
+  <div class="card"><div class="streak"><div class="fire">🔥</div><div><span class="muted">Current streak</span><div class="num" id="dashStreakDays">7 days</div><span class="trend" id="dashBestStreak">Best: 14 days</span></div></div><hr style="border:0;border-top:1px solid var(--line);margin:22px 0"><b>Don't break the chain.</b><p class="muted">Even a 5-minute mobility session counts toward your habit.</p></div>
+  <div class="card" style="display:grid;place-items:center"><div class="ring" id="progRing"><span id="progRingScore">87%</span></div><p><b>Consistency score</b></p><span class="muted" id="progRingTrend">Sessions logged vs. days tracked</span></div>
+ </div>
+ <div class="grid" style="grid-template-columns:1fr">
+  <div class="card"><h3 id="metricTitle-dash">Daily activity</h3><p class="muted" id="metricText-dash">Today's movement minutes</p><div class="bars" id="bars-dash"></div></div>
+ </div>
+ <div class="sectionHead"><h2>Recent sessions</h2></div>
+ <div class="grid" id="recentSessions" style="grid-template-columns:1fr"></div>
+</section>
+
+<section id="exercises" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">Exercise library</span><h2>Find your movement.</h2><p class="muted">Strength, mobility, posture and recovery — with AI guidance.</p></div><div class="tabs libTabs" id="libTabs"><button class="active" data-cat="All" onclick="filterLib(this)">All</button><button data-cat="Mobility" onclick="filterLib(this)">Mobility</button><button data-cat="Strength" onclick="filterLib(this)">Strength</button><button data-cat="Posture" onclick="filterLib(this)">Posture</button><button data-cat="Functional" onclick="filterLib(this)">Functional</button></div></div>
+ <div class="grid exGrid" id="exerciseGrid"></div>
+</section>
+
+<section id="workout" class="page">
+ <div class="sectionHead"><div><span class="eyebrow" id="liveBadge">● AI LIVE</span><h2 id="workoutTitle">Bodyweight Squat</h2><p class="muted" id="workoutSubtitle">Camera-first coaching with real-time form feedback, spoken aloud as you move.</p></div><div style="display:flex;gap:10px;align-items:center"><button class="iconbtn" id="voiceToggleBtn" title="Toggle voice coaching">🔊</button><button class="btn primary" onclick="finishSession()">Finish →</button></div></div>
+ <div class="grid" style="grid-template-columns:1.5fr .7fr">
+  <div>
+   <div class="camera" id="cameraFrame">
+    <div class="camOff" id="camOff">🧍</div>
+    <video id="webcam" autoplay playsinline muted></video>
+    <canvas id="poseCanvas" aria-label="Live MediaPipe pose landmarks"></canvas>
+    <div class="scan" id="scanLine" style="display:none"></div>
+    <div class="sessionControls" id="sessionControls">
+     <button class="ctrlBtn" id="pauseSessionBtn" onclick="togglePauseSession()">⏸ Pause</button>
+     <button class="ctrlBtn stop" onclick="stopSessionFromControls()">⏹ Stop</button>
+    </div>
+    <div class="modelStatus" id="modelStatus"><span class="spin"></span><span id="modelStatusText">Loading AI model…</span></div>
+    <div class="camOverlay" id="camOverlay">
+     <div>
+      <button class="btn startBtn" id="startBtn" onclick="startSession()"><span class="dot-rec"></span> <span data-i18n="workout.startLiveSession">Start Live Session</span></button>
+      <p>Turns on your camera so FitPose AI can watch your form in real time using on-device pose detection. Nothing is uploaded — the video stream never leaves your device.</p>
+     </div>
+    </div>
+   </div>
+   <div class="sessionAssist" id="sessionAssist">
+    <div class="assistCard card">
+     <div class="assistHead"><span class="chip">✦ Improvement suggestions</span><span class="muted" id="assistStatus">Waiting for your session</span></div>
+     <ul class="suggestionList" id="improvementSuggestions"><li>Start the session and FitPose AI will suggest form improvements here.</li></ul>
+    </div>
+    <div class="assistCard card">
+     <div class="assistHead"><span class="chip">🔊 <span data-i18n="ai.voiceAssistant">Voice Assistant</span> · text</span><span class="muted" id="voiceTextStatus">Ready</span></div>
+     <div class="voiceText" id="voiceAssistantText">Your live spoken coaching will also appear here as text.</div>
+    </div>
+   </div>
+   <button class="btn soft previewOpenBtn" id="workoutPreviewBtn" onclick="openExercisePreview()">▶ Exercise Preview</button>
+  </div>
+  <div>
+   <div class="card"><span class="chip" id="aiFeedbackChip">AI feedback</span><h3 id="aiFeedbackTitle">Get in frame to begin.</h3><p class="muted" id="aiFeedbackDetail">Stand back so your full body is visible, then press Start.</p><div class="progress"><i id="aiFeedbackBar" style="--w:0%"></i></div></div>
+   <br>
+   <div class="card"><h3>Session</h3>
+    <div class="grid grid4" style="gap:10px;margin-top:6px">
+     <div><span class="muted" style="font-size:11px">Reps</span><div class="num" id="repCount" style="font-size:22px">00</div></div>
+     <div><span class="muted" style="font-size:11px">Form</span><div class="num" id="formScore" style="font-size:22px">--%</div></div>
+     <div><span class="muted" style="font-size:11px">Time</span><div class="num" id="sessionTime" style="font-size:22px">00:00</div></div>
+     <div><span class="muted" style="font-size:11px">Confidence</span><div class="num" id="sessionConfidence" style="font-size:22px">--%</div></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="ai" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">✦ FitPose AI · powered by OpenAI</span><h2 data-i18n="ai.title">Your movement companion.</h2><p class="muted" data-i18n="ai.subtitle">Chat naturally about physiotherapy, posture, mobility, exercise form and recovery.</p></div></div>
+ <div class="card" id="planStatusCard" style="display:none">
+  <span class="chip">Recovery Plan</span>
+  <h3 id="planStatusTitle">—</h3>
+  <p class="muted" id="planStatusDetail">—</p>
+  <div class="progress"><i id="planStatusBar" style="--w:0%"></i></div>
+  <div class="actions" id="planStatusActions" style="margin-top:10px"></div>
+ </div>
+ <div class="card chat premiumChat">
+  <div class="chatHeader"><div><span class="chip">✦ AI COACH</span><h3>FitPose AI Coach</h3><p class="muted">Movement guidance, recovery & fitness planning</p></div><button class="iconbtn chatHistoryToggle" onclick="toggleChatHistory()" aria-label="Open chat history">☰</button></div>
+  <div class="chatShell">
+   <aside class="chatHistory" id="chatHistoryDrawer">
+    <div class="chatHistoryHead"><b>Conversations</b><button class="iconbtn" onclick="toggleChatHistory()">✕</button></div>
+    <button class="btn primary newChatBtn" onclick="newChat()">＋ New Chat</button>
+    <input class="loginInput chatSearch" placeholder="Search conversations…" oninput="filterChatHistory(this.value)">
+    <div id="chatHistoryList"></div>
+   </aside>
+   <div class="chatMain">
+    <div class="chatBody" id="chatBody"></div>
+    <div class="actions" id="chatChips">
+     <span class="chip click" onclick="sendChip('Check my posture')">Check my posture</span>
+     <span class="chip click" onclick="sendChip('Create a workout')">Create a workout</span>
+     <span class="chip click" onclick="sendChip('Create my schedule')">Create my schedule ✦</span>
+     <span class="chip click" onclick="sendChip('Why is my form wrong?')">Why is my form wrong?</span>
+    </div>
+    <div class="composer"><input id="chatInput" autocomplete="off" data-i18n-placeholder="ai.chatPlaceholder" placeholder="Ask FitPose AI anything about movement..."><button class="iconbtn" id="assistantVoiceBtn" type="button" title="Assistant Voice — tap to speak" aria-label="Assistant Voice">🎤</button><button class="btn primary" id="chatSend" data-i18n="ai.send">Send</button></div>
+    <div class="muted" id="assistantVoiceStatus" style="font-size:11px;margin-top:6px;min-height:14px"></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="schedule" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">✦ PERSONALIZED PLANNER</span><h2>Your routine, planned around you.</h2><p class="muted">Queue up the exercises you want, pick a time that works, and FitPose keeps it ready to go.</p></div></div>
+ <div class="premiumScheduleHero card"><div><span class="chip">✦ PREMIUM</span><h3>AI Schedule Builder</h3><p class="muted">Tell FitPose your goal, days and available time. Premium turns that into a personalized plan automatically.</p></div><div class="scheduleBenefits"><span>✓ Custom routines</span><span>✓ AI-generated plans</span><span>✓ Flexible timing</span><span>✓ Goal-based scheduling</span></div></div>
+ <div class="scheduleTopRow">
+  <div class="card yourScheduleCard" id="yourScheduleCard"></div>
+  <div class="scheduleTopActions">
+   <button class="btn primary" id="scheduleActionBtn" onclick="openScheduleBuilder()">✦ Create a schedule</button>
+  </div>
+ </div>
+</section>
+
+<section id="premium" class="page">
+ <div class="premiumHero card"><div><span class="eyebrow">✦ FITPOSE PREMIUM</span><h1>Unlock your <span class="gradient">best routine.</span></h1><p class="lead">Personalized AI planning, deeper progress insights and a smarter way to stay consistent.</p><div class="actions"><button class="btn primary" id="premiumCTA" onclick="activatePremium()">Unlock Premium</button><button class="btn soft" onclick="show('schedule')">Explore Schedule</button></div></div><div class="premiumOrb"><span>✦</span><small>FITPOSE<br>PREMIUM</small></div></div>
+ <div class="premiumStatus card"><div><span class="premiumStatusBadge" id="premiumStatusBadge">FREE PLAN</span><h3>Membership status</h3><p class="muted" id="premiumStatusText">You are currently on the Free plan.</p></div><button class="btn soft" id="premiumManage" style="display:none" onclick="cancelPremium()">Cancel Demo Subscription</button></div>
+ <div class="sectionHead"><div><span class="eyebrow">✦ PREMIUM BENEFITS</span><h2>More than a badge.</h2></div></div>
+ <div class="grid grid4 premiumFeatures">
+  <div class="card"><span class="premiumIcon">✦</span><h3>AI Schedule Builder</h3><p class="muted">Generate weekly and monthly plans based on your goal, level, time and preferences.</p></div>
+  <div class="card"><span class="premiumIcon">◫</span><h3>Advanced Insights</h3><p class="muted">See deeper trends across consistency, form and workout performance.</p></div>
+  <div class="card"><span class="premiumIcon">⌁</span><h3>Smart Modifications</h3><p class="muted">Ask AI to make a day easier, swap an exercise or rebalance your week.</p></div>
+  <div class="card"><span class="premiumIcon">♥</span><h3>Premium Programs</h3><p class="muted">Unlock structured goal-based programs and richer personalization.</p></div>
+ </div>
+ <div class="card pricingCard"><div><span class="chip">MOST POPULAR</span><h2>Premium Monthly</h2><p class="muted">Full access to premium planning and insights.</p></div><div class="price">₹XXX<span>/month</span></div><button class="btn primary" onclick="activatePremium()">Activate Demo Premium →</button><small class="muted">Demo subscription only — no real payment is processed.</small></div>
+</section>
+
+<section id="research" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">✦ RESEARCH LIBRARY</span><h2>Evidence behind FitPose.</h2><p class="muted">Explore the science and professional guidance that inform movement, exercise and safety.</p></div></div>
+ <div class="researchFilters"><span class="chip active">All</span><span class="chip">Exercise Science</span><span class="chip">Physiotherapy</span><span class="chip">Computer Vision</span><span class="chip">Safety</span></div>
+ <div class="referenceGrid" id="researchGrid"></div>
+</section>
+
+<section id="references" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">✦ TRUSTED REFERENCES</span><h2>Sources you can explore.</h2><p class="muted">Authoritative organizations and clinical guidance used as a reference layer. Sources are kept separate from conversational training data.</p></div></div>
+ <div class="referenceNotice card"><b>Reference-first design</b><p class="muted">FitPose does not treat a source list as a medical diagnosis. References support educational answers and should be checked in context.</p></div>
+ <div class="referenceGrid" id="referenceGrid"></div>
+</section>
+
+<section id="about" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">✦ About FitPose</span><h2>Movement science, made usable.</h2><p class="muted">What FitPose is, what informs it, and where it's headed next.</p></div><div class="actions" style="align-self:center"><button class="btn soft" onclick="show('research')">⌁ Research</button><button class="btn soft" onclick="show('references')">↗ References</button></div></div>
+ <div class="grid grid4">
+  <div class="card"><h3>What is FitPose?</h3><p class="muted">FitPose is an AI movement coach that watches your form through your own camera and turns real-time posture cues into simple, spoken and visual feedback — built to make consistent movement feel achievable, not clinical.</p></div>
+  <div class="card"><h3>Why physiotherapy matters</h3><p class="muted">Small, correctable movement patterns — a rounded lower back, an uneven squat, tight hips from sitting — compound over time. Guided, consistent movement work is one of the most accessible ways to build and protect long-term mobility.</p></div>
+  <div class="card"><h3>Our research foundation</h3><p class="muted">FitPose's pose-detection and feedback logic draws on established areas of study: biomechanics and movement quality, computer-vision pose estimation, safety-first feedback prioritization, and behavior design for habit formation.</p></div>
+  <div class="card"><h3>Where we're headed</h3><p class="muted">Planned enhancements include exercise-specific explainers, condition-aware recovery plans built with licensed physiotherapists, deeper multilingual voice coaching, and clearer long-term progress analytics.</p></div>
+ </div>
+ <div class="evidence">
+  <div><b>Biomechanics</b><span>Movement-aware feedback</span></div>
+  <div><b>Pose landmarks</b><span>Joint-position signals</span></div>
+  <div><b>Real time</b><span>Focused coaching cues</span></div>
+  <div><b>Privacy-first</b><span>Clear user control</span></div>
+ </div>
+ <div class="card" style="margin-top:22px"><b>A note on scope</b><p class="muted" style="margin-top:8px">FitPose provides fitness and movement guidance. It is not a medical diagnostic tool and does not replace assessment by a qualified healthcare professional or physiotherapist where one is needed.</p></div>
+</section>
+
+<section id="faq" class="page">
+ <div class="sectionHead"><div><span class="eyebrow">✦ Frequently asked</span><h2>Questions, answered.</h2><p class="muted">Everything people usually ask before their first FitPose session.</p></div></div>
+ <div class="faqGrid">
+  <div class="card faqItem"><p class="faqQ">Is FitPose a substitute for a physiotherapist?</p><p class="faqA">No. FitPose gives fitness and movement guidance, not a diagnosis. For pain, injury or a medical condition, please see a qualified healthcare professional.</p></div>
+  <div class="card faqItem"><p class="faqQ">How does the AI know if my form is correct?</p><p class="faqA">Your camera's video is analyzed on-device with pose detection that tracks your joints in real time and compares your movement to the pattern expected for that exercise.</p></div>
+  <div class="card faqItem"><p class="faqQ">Does FitPose store or share my camera footage?</p><p class="faqA">Pose analysis runs locally in your session; FitPose is built around clear, privacy-first controls rather than uploading raw video.</p></div>
+  <div class="card faqItem"><p class="faqQ">What languages does FitPose support?</p><p class="faqA">The interface and AI Coach support English, Hindi, Bengali, Marathi, Tamil, Telugu, Kannada, Gujarati, Malayalam, Punjabi and Urdu — pick yours from the profile page.</p></div>
+  <div class="card faqItem"><p class="faqQ">Do I need any equipment?</p><p class="faqA">No — every exercise in the library is bodyweight-only. You just need enough space to see your full body in the camera frame.</p></div>
+  <div class="card faqItem"><p class="faqQ">Can I change my weekly schedule?</p><p class="faqA">Yes. Visit the Schedule page any time to swap a day's suggested exercise or regenerate the whole week from your AI Coach.</p></div>
+ </div>
+ <div class="sectionHead" style="margin-top:40px"><div><span class="eyebrow">✦ Community</span><h2>Real experiences.</h2></div></div>
+ <div class="reviewsGrid">
+  <div class="card reviewCard"><div class="reviewHead"><div class="reviewAvatar">A</div><div><b>Aarav Mehta</b><div class="reviewStars">★★★★★</div></div></div><p class="reviewText">The posture score makes my progress easy to understand. The cues are short and actually useful mid-workout.</p></div>
+  <div class="card reviewCard"><div class="reviewHead"><div class="reviewAvatar">P</div><div><b>Priya Nair</b><div class="reviewStars">★★★★★</div></div></div><p class="reviewText">I started with the mobility sessions and stayed consistent because the dashboard shows small improvements every week.</p></div>
+  <div class="card reviewCard"><div class="reviewHead"><div class="reviewAvatar">R</div><div><b>Rohan Verma</b><div class="reviewStars">★★★★</div></div></div><p class="reviewText">The AI feedback helped me notice my squat alignment. I like that the interface doesn't feel cluttered.</p></div>
+ </div>
+</section>
+
+<section id="profile" class="page">
+ <div class="sectionHead"><div><span class="eyebrow" data-i18n="profile.title">Profile</span><h2 data-i18n="profile.subtitle">Your FitPose space.</h2></div></div>
+ <div class="grid">
+  <div class="card profileTop">
+   <div class="langIconWrap">
+    <button class="iconbtn langIconBtn" id="langIconBtn" data-i18n-title="profile.preferredLanguage" title="Voice Assistant Language" aria-haspopup="true" aria-expanded="false">🌐</button>
+    <div class="langPopover" id="langPopover" role="menu" hidden></div>
+   </div>
+   <div style="font-size:70px">🌿</div><h2 id="profileName">Guest</h2><p class="muted" id="profileEmail">Movement Explorer</p><span class="chip" id="profileStreakChip">🔥 0 day streak</span><button class="btn soft signoutBtn" id="signoutBtn" data-i18n="profile.signOut" onclick="doSignOut()" style="display:none">Sign out</button>
+  </div>
+  <div class="card">
+   <h3 data-i18n="profile.goals">Goals</h3>
+   <ul class="goalsList" id="goalsList"></ul>
+   <div class="composer" style="margin-top:14px"><input id="goalInput" data-i18n-placeholder="profile.addGoalPlaceholder" placeholder="Add a new goal…"><button class="btn primary smallbtn" style="padding:12px 16px" data-i18n="profile.add" onclick="addGoal()">Add</button></div>
+  </div>
+  <div class="card"><h3 data-i18n="profile.achievements">Achievements</h3><div class="achv" id="achvList"></div></div>
+ </div>
+ <div class="sectionHead"><h2 data-i18n="profile.accountHeading">Account & sign-in</h2></div>
+ <div class="grid">
+  <div class="card">
+   <h3 data-i18n="profile.personalDetails">Personal details</h3>
+   <div class="profileSetupGrid">
+    <div><label data-i18n="onboarding.ageGroup">Age group</label><select class="loginInput" id="profileAgeGroup"><option value="under18" data-i18n="onboarding.under18">Under 18</option><option value="18-60" data-i18n="onboarding.18to60">18–60</option><option value="60plus" data-i18n="onboarding.60plus">60+</option></select></div>
+    <div><label data-i18n="onboarding.gender">Gender</label><select class="loginInput" id="profileGender"><option value="female" data-i18n="onboarding.female">Female</option><option value="male" data-i18n="onboarding.male">Male</option><option value="nonbinary" data-i18n="onboarding.nonbinary">Non-binary</option><option value="prefer_not" data-i18n="onboarding.preferNot">Prefer not to say</option></select></div>
+   </div>
+   <button class="btn soft" id="saveProfileDetails" data-i18n="onboarding.saveDetails">Save details</button>
+  </div>
+  <div class="card">
+   <h3 data-i18n="profile.preferredLanguage">Voice Assistant Language</h3>
+   <select class="loginInput" id="languageSelect" onchange="setPreferredLanguage(this.value)"></select>
+   <p class="muted" style="margin-top:6px">FitPose's screens are always in English. This only changes the language the Voice Assistant and AI Coach speak.</p>
+  </div>
+  <div class="card">
+   <h3 data-i18n="profile.googleAccount">Google account</h3>
+   <p class="muted" id="googleLinkStatus">Not linked.</p>
+  </div>
+  <div class="card">
+   <h3 data-i18n="profile.appPassword">App password</h3>
+   <p class="muted" id="appPasswordStatus">Set a password so you can sign in with just your email, even without Google.</p>
+   <form id="appPasswordForm" onsubmit="return false">
+    <label data-i18n="profile.newPassword">New password</label>
+    <div class="pass"><input class="loginInput" id="newAppPassword" type="password" placeholder="At least 6 characters" minlength="6" required><button type="button" onclick="togglePass(this)">◉</button></div>
+    <div class="field-err" id="appPasswordErr"></div>
+    <button class="btn primary loginBtn" id="appPasswordSubmit" type="submit" data-i18n="profile.savePassword">Save password →</button>
+   </form>
+  </div>
+ </div>
+</section>
+
+<div class="profileOnboardingModal" id="profileOnboardingModal" role="dialog" aria-modal="true" hidden>
+ <div class="profileOnboardingCard">
+  <span class="eyebrow" data-i18n="onboarding.eyebrow">✦ Personalize FitPose</span>
+  <h2 data-i18n="onboarding.title">Tell us a little about you.</h2>
+  <p class="muted" data-i18n="onboarding.subtitle">Choose your age group, gender and language so FitPose can personalize your experience.</p>
+  <div class="profileSetupGrid">
+   <div><label data-i18n="onboarding.ageGroup">Age group</label><select class="loginInput" id="onboardingAgeGroup"><option value="" data-i18n="onboarding.chooseAge">Choose age group</option><option value="under18" data-i18n="onboarding.under18">Under 18</option><option value="18-60" data-i18n="onboarding.18to60">18–60</option><option value="60plus" data-i18n="onboarding.60plus">60+</option></select></div>
+   <div><label data-i18n="onboarding.gender">Gender</label><select class="loginInput" id="onboardingGender"><option value="" data-i18n="onboarding.chooseGender">Choose gender</option><option value="female" data-i18n="onboarding.female">Female</option><option value="male" data-i18n="onboarding.male">Male</option><option value="nonbinary" data-i18n="onboarding.nonbinary">Non-binary</option><option value="prefer_not" data-i18n="onboarding.preferNot">Prefer not to say</option></select></div>
+   <div style="grid-column:1/-1"><label data-i18n="profile.preferredLanguage">Voice Assistant Language</label><select class="loginInput" id="onboardingLanguage"></select></div>
+  </div>
+  <div class="field-err" id="onboardingErr"></div>
+  <button class="btn primary loginBtn" id="saveOnboarding" data-i18n="onboarding.continue">Continue →</button>
+ </div>
+</div>
+
+<div class="mobileNav" id="mobileNav"></div>
+</div>
+
+<div class="premiumGateModal" id="premiumGateModal" role="dialog" aria-modal="true">
+ <div class="premiumGateCard"><button class="previewClose" onclick="closePremiumGate()">✕</button><div class="premiumGateIcon">✦</div><span class="chip">PREMIUM FEATURE</span><h2>Unlock <span id="premiumGateFeature">this feature</span></h2><p class="muted">Get personalized AI planning, advanced insights and richer FitPose tools with Premium.</p><div class="gateList"><span>✓ AI-generated schedules</span><span>✓ Weekly & monthly plans</span><span>✓ Smart schedule changes</span><span>✓ Advanced progress insights</span></div><button class="btn primary" onclick="show('premium');closePremiumGate()">View Premium Plans →</button><button class="btn soft" onclick="closePremiumGate()">Maybe Later</button></div>
+</div>
+
+<div class="scheduleBuilderModal" id="scheduleBuilderModal" role="dialog" aria-modal="true" onclick="if(event.target===this) closeScheduleBuilder()">
+ <div class="scheduleBuilderCard">
+  <button class="previewClose" onclick="closeScheduleBuilder()" aria-label="Close">✕</button>
+  <div class="scheduleBuilderTop">
+   <div class="scheduleTimePicker">
+    <span class="scheduleTimeIcon">⏰</span>
+    <input type="time" id="scheduleTimeInput" class="loginInput" onchange="onScheduleTimeChange(this.value)">
+   </div>
+   <div class="scheduleTotalTime"><span class="muted">Total workout time</span><b id="scheduleTotalTimeVal">0m</b></div>
+  </div>
+  <span class="chip">✦ SCHEDULE BUILDER</span>
+  <h2>Build your schedule</h2>
+  <p class="muted">Add exercises to your queue yourself, or let FitPose AI Coach put one together for you.</p>
+  <div class="scheduleAddRow">
+   <select class="loginInput" id="scheduleExerciseSelect"></select>
+   <button class="btn primary smallbtn" onclick="addScheduleExercise()">+ Add exercise</button>
+   <button class="btn soft smallbtn" onclick="aiGenerateSchedule()">✦ Generate with AI Coach</button>
+  </div>
+  <div class="scheduleQueue" id="scheduleQueueList"></div>
+  <div class="scheduleBuilderActions">
+   <button class="btn soft" onclick="clearScheduleBuilder()">Clear all</button>
+   <button class="btn primary" onclick="saveScheduleBuilder()">Save schedule</button>
+  </div>
+ </div>
+</div>
+
+<div class="previewModal" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewTitle" onclick="if(event.target===this) closeExercisePreview()">
+ <div class="previewCard">
+  <button class="previewClose" id="previewCloseBtn" onclick="closeExercisePreview()" aria-label="Close preview">✕</button>
+  <div class="previewHead">
+   <span class="chip" id="previewChip">Exercise Preview</span>
+   <h2 id="previewTitle">Bodyweight Squat</h2>
+   <p class="muted" id="previewDesc">Lower body strength</p>
+  </div>
+  <div class="previewBody">
+   <div class="previewMedia" id="previewMediaFrame">
+    <video id="previewVideo" autoplay loop muted playsinline></video>
+    <img id="previewGif" alt="" style="display:none">
+    <div class="previewMediaPlaceholder" id="previewMediaPlaceholder">Media coming soon</div>
+   </div>
+   <div class="previewSteps">
+    <h3>How to perform it</h3>
+    <ol id="previewStepsList"></ol>
+    <button class="btn primary" id="previewStartBtn" onclick="startFromPreview()">Start this exercise →</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script type="module" src="/src/js/app.js"></script>
+</body>
+</html>
